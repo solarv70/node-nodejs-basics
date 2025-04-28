@@ -8,23 +8,34 @@ const renameFile = async () => {
   try {
     // check file wrongFilename.txt
     await fs.access(oldFilePath);
-  } catch {
-    throw new Error('FS operation failed'); // If no file
+  } catch (err) {
+    console.error('Error: No file!');
+    throw new Error('FS operation failed');
   }
 
   try {
-    // check file properFilename.md
+    // Check file properFilename.md
     await fs.access(newFilePath);
-    throw new Error('FS operation failed'); // File allready
+    console.error('Error: File already !');
+    throw new Error('FS operation failed');
   } catch (err) {
     if (err.code !== 'ENOENT') {
-      throw new Error('FS operation failed'); // No file
+      console.error('Error checking!');
+      throw new Error('FS operation failed');
     }
   }
 
-  // rename file
-  await fs.rename(oldFilePath, newFilePath);
-  console.log('File renamed!');
+  try {
+    // Reneme file
+    await fs.rename(oldFilePath, newFilePath);
+    console.log('File renamed!');
+  } catch (err) {
+    console.error('Error rename!', err);
+    throw new Error('FS operation failed');
+  }
 };
 
-await renameFile();
+// run function
+renameFile().catch(err => {
+  console.error('error:', err.message);
+});
